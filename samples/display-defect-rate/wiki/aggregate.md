@@ -1,6 +1,6 @@
 # aggregate
 
-**설명된 버전**: v2.4 report.md "핵심 로직 설명"
+**설명된 버전**: v2.5 report.md "핵심 로직 설명"
 **코드 위치**: src/main.py:26
 
 집계의 핵심은 `aggregate` 하나다:

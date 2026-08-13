@@ -6,9 +6,11 @@ import { fileURLToPath } from 'node:url';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-// NAVIGATION.md 행에 있는 이름 = wiki 페이지가 있어야 하는 이름. 반대로
-// "핵심 로직 설명" 밖의 이름(display-image-inspection의 main 등)은 NAVIGATION.md에도
-// 없으므로 wiki 페이지도 없어야 한다 — 지어내지 않는다 원칙(CLAUDE.md §7)을 검증한다.
+// report.md의 "핵심 로직 설명" 절에 실제로 등장하는 이름만 wiki 페이지가 있어야
+// 한다. 반대로 그 절 밖의 이름(display-image-inspection의 main 등)은 위키가
+// 지어내지 않아야 하므로 페이지가 없어야 한다(CLAUDE.md §6, Codex 반박 검증
+// 2026-08-13에서 확인). NAVIGATION.md는 wiki/index.md와 중복이라 폐지됐으므로
+// (같은 날, 사용자 지적) 여기서는 wiki/만을 기준으로 검증한다.
 const SAMPLES = {
   'display-defect-rate': {
     expectedPages: ['aggregate', 'print_table', 'write_report'],
@@ -27,16 +29,13 @@ for (const [name, { expectedPages, forbiddenPages }] of Object.entries(SAMPLES))
     assert.ok(existsSync(path.join(wikiDir, 'index.md')), `missing ${wikiDir}/index.md — run the wiki-writer subagent for '${name}'`);
   });
 
-  test(`sample '${name}' wiki has exactly one page per NAVIGATION.md row, no more no less`, () => {
-    const navPath = path.join(projectRoot, 'samples', name, 'NAVIGATION.md');
-    const navText = readFileSync(navPath, 'utf8');
-    const navRows = navText
-      .split('\n')
-      .filter((line) => line.startsWith('|') && !line.startsWith('|---'))
-      .slice(1); // header row
-
+  test(`sample '${name}' wiki has exactly one page per core function/constant, no more no less`, () => {
     const pageFiles = readdirSync(wikiDir).filter((f) => f !== 'index.md');
-    assert.equal(pageFiles.length, navRows.length, `expected ${navRows.length} wiki page(s) for '${name}' (one per NAVIGATION.md row), found ${pageFiles.length}: ${pageFiles.join(', ')}`);
+    assert.equal(
+      pageFiles.length,
+      expectedPages.length,
+      `expected ${expectedPages.length} wiki page(s) for '${name}', found ${pageFiles.length}: ${pageFiles.join(', ')}`,
+    );
 
     for (const fn of expectedPages) {
       const page = pageFiles.find((f) => f === `${fn}.md`);
@@ -44,10 +43,10 @@ for (const [name, { expectedPages, forbiddenPages }] of Object.entries(SAMPLES))
     }
   });
 
-  test(`sample '${name}' wiki does not fabricate pages for names outside NAVIGATION.md`, () => {
+  test(`sample '${name}' wiki does not fabricate pages for names outside report.md "핵심 로직 설명"`, () => {
     const existing = existsSync(wikiDir) ? readdirSync(wikiDir) : [];
     for (const fn of forbiddenPages) {
-      assert.ok(!existing.includes(`${fn}.md`), `wiki/ for '${name}' should not have a page for '${fn}' — it is outside NAVIGATION.md's "핵심 로직 설명" scope`);
+      assert.ok(!existing.includes(`${fn}.md`), `wiki/ for '${name}' should not have a page for '${fn}' — it is outside report.md's "핵심 로직 설명" scope`);
     }
   });
 
@@ -61,10 +60,14 @@ for (const [name, { expectedPages, forbiddenPages }] of Object.entries(SAMPLES))
     }
   });
 
-  test(`sample '${name}' wiki/index.md links to every page`, () => {
+  test(`sample '${name}' wiki/index.md links to every page and cites a version + code location per row`, () => {
     const indexText = readFileSync(path.join(wikiDir, 'index.md'), 'utf8');
     for (const fn of expectedPages) {
       assert.ok(indexText.includes(`(${fn}.md)`), `wiki/index.md for '${name}' should link to ${fn}.md`);
+
+      const row = indexText.split('\n').find((line) => line.includes(`(${fn}.md)`));
+      assert.match(row, /v\d+\.\d+ report\.md/, `wiki/index.md row for '${fn}' in '${name}' must cite a version and report.md, got: ${row}`);
+      assert.match(row, /src\/main\.py:\d+/, `wiki/index.md row for '${fn}' in '${name}' must cite a src/main.py:<line> code location, got: ${row}`);
     }
   });
 }

@@ -177,6 +177,20 @@ Phase 3 완료·승인 이후, 「되면 좋은」 LLM wiki(③) 착수를 논�
 - `register-version`으로 두 샘플 모두 **v2.5**를 등록했다(직전과 같은 담당자: `display-defect-rate` B, `display-image-inspection` D → 마이너 증가). `test/phase2-versioning.test.mjs`의 CASES에 v2.5 항목을 추가해 이력 건수 회귀 테스트를 최신화했다.
 - **완료 기준 4("사람이 눈으로 최종 확인")는 아직 남아 있다** — 위 자동 검증까지 통과한 상태이며, 사람의 최종 확인·승인을 기다린다.
 
+**Phase 4 재정의 — NAVIGATION.md 폐지, wiki/로 통합 (2026-08-13, 같은 날 이어진 대화)**
+
+사람의 최종 확인을 받는 과정에서, `NAVIGATION.md`(에이전트 간 인계용 표)와 `wiki/index.md`(사람이 읽는 진입점)가 **같은 정보(이름·설명된 버전·코드 위치)를 중복해서 담고 있다**는 지적이 나왔다. `wiki/index.md`가 이미 그 표를 포함하므로, `NAVIGATION.md`는 사람에게는 무의미한 중간 산출물이었다.
+
+- **결정**: `NAVIGATION.md`와 `version-navigator` 서브에이전트를 폐지한다. `wiki-writer`가 `code-analyzer`·`report-history-analyzer`를 **직접** 호출하는 오케스트레이터로 재정의되고, `wiki/index.md`에 "설명된 버전 (report.md 절)"·"현재 코드 위치" 열을 추가해 옛 NAVIGATION.md 표를 흡수했다.
+- `.claude/agents/version-navigator.md` 삭제, `code-analyzer.md`/`report-history-analyzer.md`의 호출자 설명을 `wiki-writer`로 갱신.
+- `register-version` 스킬 절차에서 "`version-navigator` 호출" 단계를 제거하고 "`wiki-writer` 호출"만 남겼다.
+- `CLAUDE.md` §6·§7을 하나로 병합(§6 "wiki/ 형식")하고, 이력 각주로 이 폐지 경위를 남겼다.
+- `samples/<name>/NAVIGATION.md`(작업 사본)를 삭제했다. **`v2.3`~`v2.5` 버전 스냅샷의 `NAVIGATION.md`는 그대로 둔다**(이력 불변 원칙 — 소급 삭제하지 않음). v2.6부터 등록되는 스냅샷에는 없다.
+- `test/phase3-navigation.test.mjs` 삭제(NAVIGATION.md 전용 검증이라 더 이상 의미 없음), `test/phase4-wiki.test.mjs`를 `NAVIGATION.md`가 아니라 `wiki/`만 근거로 검증하도록 다시 작성.
+- 두 샘플의 `wiki/`를 새 오케스트레이터로 재생성(누락됐던 `display-image-inspection`의 `DEVIATION_THRESHOLD`/`MIN_CLUSTER_SIZE` 페이지, 코드 위치 상대경로 형식을 바로잡음). `npm test` 34/34.
+- Codex 반박 검증(2차) — 인용 정확성·코드 위치 일치·금지 페이지 미생성·"설명된 버전"이 최고 등록 버전(v2.5)과 일치함을 확인, 문제 없음.
+- 이 변경 자체는 아직 새 버전으로 등록하지 않았다(작업 사본에만 반영) — 등록 여부는 사람 확인 후 진행한다.
+
 ## ⑤ 완료를 판정할 방법 (검증 게이트)
 - 기계가 판정하는 것:
   - **`npm test`** (`node --test`) — ④ Phase 0~3의 완료 조건 전부 (샘플 2/2, v1.0 잔존, 샘플별 이력 4건과 작업자 A·B·B·B / C·D·D·D, 대시보드 HTML에 버전·담당자·분석 링크 포함, 브리핑 네 항목 2/2)

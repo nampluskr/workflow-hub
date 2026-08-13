@@ -1,6 +1,6 @@
 ---
 name: report-history-analyzer
-description: samples/<프로젝트명>/의 현재 docs/report.md와 .claude/version-history/<프로젝트명>/v*/의 모든 과거 스냅샷 report.md, history.json을 읽어 "이 함수/주제가 어느 버전 어느 절에서 설명됐는지"를 찾는다. version-navigator 서브에이전트가 NAVIGATION.md를 만들 때 하위 호출로 사용한다.
+description: samples/<프로젝트명>/의 현재 docs/report.md와 .claude/version-history/<프로젝트명>/v*/의 모든 과거 스냅샷 report.md, history.json을 읽어 "이 함수/주제가 어느 버전 어느 절에서 설명됐는지"를 찾는다. wiki-writer 서브에이전트가 위키를 만들 때 하위 호출로 사용한다.
 tools: Read, Glob
 model: sonnet
 ---
@@ -37,4 +37,4 @@ model: sonnet
 <이름> — 핵심 로직 설명에 없음 (다른 절에만 언급됨 / report.md에 전혀 없음)
 ```
 
-파일을 쓰지 않는다 — `NAVIGATION.md`를 쓰는 것은 호출한 `version-navigator`의 몫이다.
+파일을 쓰지 않는다 — 위키를 쓰는 것은 호출한 `wiki-writer`의 몫이다.

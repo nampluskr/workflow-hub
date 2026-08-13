@@ -1,6 +1,6 @@
 ---
 name: code-analyzer
-description: samples/<프로젝트명>/src/ 안에서 특정 함수들의 실제 파일:줄 위치를 찾는다. version-navigator 서브에이전트가 NAVIGATION.md를 만들 때 하위 호출로 사용한다. 단독으로는 "이 프로젝트 코드에서 X 함수가 어디 있는지 찾아줘" 같은 요청에도 쓸 수 있다.
+description: samples/<프로젝트명>/src/ 안에서 특정 함수들의 실제 파일:줄 위치를 찾는다. wiki-writer 서브에이전트가 위키를 만들 때 하위 호출로 사용한다. 단독으로는 "이 프로젝트 코드에서 X 함수가 어디 있는지 찾아줘" 같은 요청에도 쓸 수 있다.
 tools: Read, Grep, Glob
 model: sonnet
 ---
@@ -28,4 +28,4 @@ model: sonnet
 <함수명> — <파일 상대경로>:<정의된 줄 번호> — <코드만 보고 판단한 한 줄 요약>
 ```
 
-파일을 쓰지 않는다 — 이 결과를 받아 `NAVIGATION.md`를 쓰는 것은 호출한 `version-navigator`의 몫이다.
+파일을 쓰지 않는다 — 이 결과를 받아 위키를 쓰는 것은 호출한 `wiki-writer`의 몫이다.

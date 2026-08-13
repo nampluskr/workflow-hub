@@ -106,7 +106,7 @@
       ],
       "doc": "PLAN.md",
       "done_at": null,
-      "note": "구현·실행 완료: wiki-writer 신설, 두 샘플 wiki/ 생성 후 v2.5 등록(B/D), Codex 반박 검증 통과(1건 발견/수정), test/phase4-wiki.test.mjs 신설, npm test 40/40. 남은 것: 완료 기준 4 - 사람의 최종 눈 확인·승인"
+      "note": "NAVIGATION.md/version-navigator 폐지, wiki-writer가 code-analyzer/report-history-analyzer를 직접 호출하는 오케스트레이터로 재정의(2026-08-13, 사용자 지적 - wiki/index.md와 중복). wiki/ 재생성 + Codex 재검증 통과, npm test 34/34. 아직 새 버전 미등록, 완료 기준 4(사람 최종 확인) 대기 중"
     }
   ]
 }
