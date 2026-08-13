@@ -26,20 +26,20 @@ function assertHeadingsInOrder(text, headings, label) {
 }
 
 for (const name of SAMPLES) {
-  test(`sample '${name}' has main.py at the required path`, () => {
-    const mainPath = path.join(projectRoot, 'samples', name, 'main.py');
+  test(`sample '${name}' has src/main.py at the required path`, () => {
+    const mainPath = path.join(projectRoot, 'samples', name, 'src', 'main.py');
     assert.ok(existsSync(mainPath), `missing ${mainPath}`);
   });
 
-  test(`sample '${name}' has MANUAL.md with all required sections in order`, () => {
-    const manualPath = path.join(projectRoot, 'samples', name, 'MANUAL.md');
-    assert.ok(existsSync(manualPath), `missing ${manualPath}`);
-    assertHeadingsInOrder(readFileSync(manualPath, 'utf8'), REQUIRED_MANUAL_HEADINGS, `MANUAL.md for '${name}'`);
+  test(`sample '${name}' has README.md with all required sections in order`, () => {
+    const readmePath = path.join(projectRoot, 'samples', name, 'README.md');
+    assert.ok(existsSync(readmePath), `missing ${readmePath}`);
+    assertHeadingsInOrder(readFileSync(readmePath, 'utf8'), REQUIRED_MANUAL_HEADINGS, `README.md for '${name}'`);
   });
 
-  test(`sample '${name}' has CODE_ANALYSIS.md with all required sections in order`, () => {
-    const analysisPath = path.join(projectRoot, 'samples', name, 'CODE_ANALYSIS.md');
-    assert.ok(existsSync(analysisPath), `missing ${analysisPath}`);
-    assertHeadingsInOrder(readFileSync(analysisPath, 'utf8'), REQUIRED_ANALYSIS_HEADINGS, `CODE_ANALYSIS.md for '${name}'`);
+  test(`sample '${name}' has docs/report.md with all required sections in order`, () => {
+    const reportPath = path.join(projectRoot, 'samples', name, 'docs', 'report.md');
+    assert.ok(existsSync(reportPath), `missing ${reportPath}`);
+    assertHeadingsInOrder(readFileSync(reportPath, 'utf8'), REQUIRED_ANALYSIS_HEADINGS, `docs/report.md for '${name}'`);
   });
 }

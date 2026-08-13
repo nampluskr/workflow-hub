@@ -18,6 +18,12 @@
       "author": "B",
       "date": "2026-08-13",
       "summary": "상세 코드 분석 문서(CODE_ANALYSIS.md) 추가"
+    },
+    {
+      "version": "2.2",
+      "author": "B",
+      "date": "2026-08-13",
+      "summary": "디렉터리 구조 재정리 - README.md/src/docs (개별 레포 전환 대비)"
     }
   ]
 }

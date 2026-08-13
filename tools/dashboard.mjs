@@ -47,9 +47,9 @@ function loadProjects() {
       ? JSON.parse(readFileSync(historyPath, 'utf8'))
       : { project: name, versions: [] };
 
-    const manualPath = path.join(projectRoot, 'samples', name, 'MANUAL.md');
-    const purpose = existsSync(manualPath)
-      ? extractSection(readFileSync(manualPath, 'utf8'), '## 용도')
+    const readmePath = path.join(projectRoot, 'samples', name, 'README.md');
+    const purpose = existsSync(readmePath)
+      ? extractSection(readFileSync(readmePath, 'utf8'), '## 용도')
       : '';
 
     const versions = [...history.versions].sort(compareVersionDesc);
@@ -61,13 +61,20 @@ function renderProjectCard(project) {
   const rows = project.versions.map((v) => {
     const snapshotPath = `.claude/version-history/${project.name}/v${v.version}`;
     const localSnapshotDir = path.join(historyRoot, project.name, `v${v.version}`);
-    const codeUrl = `${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/main.py`;
-    const manualUrl = `${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/MANUAL.md`;
     const githubUrl = `${GITHUB_REPO_URL}/tree/${GITHUB_BRANCH}/${snapshotPath}`;
 
-    const hasAnalysis = existsSync(path.join(localSnapshotDir, 'CODE_ANALYSIS.md'));
-    const analysisLink = hasAnalysis
-      ? ` · <a href="${escapeHtml(`${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/CODE_ANALYSIS.md`)}" target="_blank" rel="noopener">분석</a>`
+    // README.md는 GitHub이 폴더 페이지에서 자동 렌더링하고, src/의 코드는
+    // 그 폴더를 열면 바로 보이므로 별도 링크를 두지 않는다 — 분석 문서만
+    // 자동 렌더링되지 않아 직접 링크가 필요하다. 새 구조는 docs/report.md,
+    // 2026-08-13 구조 개편 이전 스냅샷(v2.1 등)은 루트의 CODE_ANALYSIS.md에
+    // 있으므로 둘 다 확인해서 있는 쪽으로 링크한다.
+    const analysisRelPath = existsSync(path.join(localSnapshotDir, 'docs', 'report.md'))
+      ? 'docs/report.md'
+      : existsSync(path.join(localSnapshotDir, 'CODE_ANALYSIS.md'))
+        ? 'CODE_ANALYSIS.md'
+        : null;
+    const analysisLink = analysisRelPath
+      ? `<a href="${escapeHtml(`${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/${analysisRelPath}`)}" target="_blank" rel="noopener">분석</a> · `
       : '';
 
     return `
@@ -77,9 +84,7 @@ function renderProjectCard(project) {
           <td>${escapeHtml(v.date)}</td>
           <td>${escapeHtml(v.summary)}</td>
           <td class="links">
-            <a href="${escapeHtml(codeUrl)}" target="_blank" rel="noopener">코드</a>
-            · <a href="${escapeHtml(manualUrl)}" target="_blank" rel="noopener">매뉴얼</a>${analysisLink}
-            · <a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener">깃헙</a>
+            ${analysisLink}<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener">깃헙</a>
           </td>
         </tr>`;
   }).join('');
@@ -95,7 +100,7 @@ function renderProjectCard(project) {
       ${project.purpose ? `<p class="purpose">${escapeHtml(project.purpose)}</p>` : ''}
       <table>
         <thead>
-          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th><th>코드 · 매뉴얼 · (분석) · 깃헙</th></tr>
+          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th><th>(분석) · 깃헙</th></tr>
         </thead>
         <tbody>${rows || '<tr><td colspan="5" class="empty">등록된 버전이 없습니다</td></tr>'}</tbody>
       </table>

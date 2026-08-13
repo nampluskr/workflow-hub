@@ -9,7 +9,7 @@ import csv
 import sys
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_IMAGE_DIR = BASE_DIR / "images"
 DEFAULT_OUTPUT = BASE_DIR / "images" / "defect_report.csv"
 

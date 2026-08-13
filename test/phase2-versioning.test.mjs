@@ -7,91 +7,122 @@ import { spawnSync } from 'node:child_process';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-// v1.0 = 최초 등록. v2.0 = 담당자가 A->B로 바뀌어 메이저 증가. v2.1 = v2.0과 같은
-// 담당자(B)가 다시 등록해 마이너 증가. CLAUDE.md §4의 메이저/마이너 규칙 그대로.
+// 프로젝트별 버전 계보. 각 버전은 등록 당시의 디렉터리 관례를 그대로 반영한다 —
+// v1.0/v2.0: main.py+MANUAL.md만 있던 최초 구조.
+// v2.1: 같은 구조에 CODE_ANALYSIS.md만 루트에 추가(2026-08-13, 문서 요구사항 도입).
+// v2.2: README.md/src/main.py/docs/report.md로 재정리(2026-08-13, 개별 레포 전환 대비).
+// 과거 버전에 새 관례를 소급 적용하지 않는다는 원칙(CLAUDE.md §1)을 그대로 검증한다.
 const CASES = [
   {
     project: 'display-defect-rate',
-    versions: ['1.0', '2.0', '2.1'],
-    authors: ['A', 'B', 'B'],
-    v1OnlyMarker: null,
     v2OnlyMarker: 'overall_defect_rate',
+    versions: [
+      { version: '1.0', author: 'A', main: 'main.py', manual: 'MANUAL.md', analysis: null },
+      { version: '2.0', author: 'B', main: 'main.py', manual: 'MANUAL.md', analysis: null },
+      { version: '2.1', author: 'B', main: 'main.py', manual: 'MANUAL.md', analysis: 'CODE_ANALYSIS.md' },
+      { version: '2.2', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+    ],
   },
   {
     project: 'display-image-inspection',
-    versions: ['1.0', '2.0', '2.1'],
-    authors: ['C', 'D', 'D'],
-    v1OnlyMarker: null,
     v2OnlyMarker: '평균 크기',
+    versions: [
+      { version: '1.0', author: 'C', main: 'main.py', manual: 'MANUAL.md', analysis: null },
+      { version: '2.0', author: 'D', main: 'main.py', manual: 'MANUAL.md', analysis: null },
+      { version: '2.1', author: 'D', main: 'main.py', manual: 'MANUAL.md', analysis: 'CODE_ANALYSIS.md' },
+      { version: '2.2', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+    ],
   },
 ];
 
-for (const { project, versions, authors, v2OnlyMarker } of CASES) {
-  const [v1, v2, v3] = versions;
+function snapshotPath(project, version, ...rest) {
+  return path.join(projectRoot, '.claude', 'version-history', project, `v${version}`, ...rest);
+}
 
-  test(`'${project}' v${v1} snapshot exists and was not overwritten by v${v2}`, () => {
-    const v1Main = path.join(projectRoot, '.claude', 'version-history', project, `v${v1}`, 'main.py');
+for (const { project, v2OnlyMarker, versions } of CASES) {
+  const [v1, v2, v3, v4] = versions;
+
+  test(`'${project}' v${v1.version} snapshot exists and was not overwritten by v${v2.version}`, () => {
+    const v1Main = snapshotPath(project, v1.version, v1.main);
     assert.ok(existsSync(v1Main), `missing ${v1Main}`);
 
     const v1Text = readFileSync(v1Main, 'utf8');
     assert.ok(
       !v1Text.includes(v2OnlyMarker),
-      `v${v1}/main.py for '${project}' already contains the v${v2}-only marker '${v2OnlyMarker}' — v${v1} was overwritten`,
+      `v${v1.version}/${v1.main} for '${project}' already contains the v${v2.version}-only marker '${v2OnlyMarker}' — v${v1.version} was overwritten`,
     );
 
-    const v2Main = path.join(projectRoot, '.claude', 'version-history', project, `v${v2}`, 'main.py');
+    const v2Main = snapshotPath(project, v2.version, v2.main);
     assert.ok(existsSync(v2Main), `missing ${v2Main}`);
     const v2Text = readFileSync(v2Main, 'utf8');
-    assert.ok(v2Text.includes(v2OnlyMarker), `v${v2}/main.py for '${project}' should contain '${v2OnlyMarker}'`);
+    assert.ok(v2Text.includes(v2OnlyMarker), `v${v2.version}/${v2.main} for '${project}' should contain '${v2OnlyMarker}'`);
   });
 
-  test(`'${project}' registers each author's own MANUAL.md per version, not just code`, () => {
-    for (const version of [v1, v2]) {
-      const manualPath = path.join(projectRoot, '.claude', 'version-history', project, `v${version}`, 'MANUAL.md');
+  test(`'${project}' registers each author's own manual per version, not just code`, () => {
+    for (const v of [v1, v2]) {
+      const manualPath = snapshotPath(project, v.version, v.manual);
       assert.ok(existsSync(manualPath), `missing ${manualPath} — each version snapshot must include the manual the author wrote for that version`);
     }
 
-    const v1Manual = readFileSync(path.join(projectRoot, '.claude', 'version-history', project, `v${v1}`, 'MANUAL.md'), 'utf8');
-    const v2Manual = readFileSync(path.join(projectRoot, '.claude', 'version-history', project, `v${v2}`, 'MANUAL.md'), 'utf8');
-    assert.notEqual(v1Manual, v2Manual, `v${v1} and v${v2} MANUAL.md for '${project}' are identical — expected the v${v2} author to have updated it`);
+    const v1Manual = readFileSync(snapshotPath(project, v1.version, v1.manual), 'utf8');
+    const v2Manual = readFileSync(snapshotPath(project, v2.version, v2.manual), 'utf8');
+    assert.notEqual(v1Manual, v2Manual, `v${v1.version} and v${v2.version} manuals for '${project}' are identical — expected the v${v2.version} author to have updated it`);
   });
 
-  test(`'${project}' v${v3} (same author as v${v2}) is a minor bump and adds CODE_ANALYSIS.md without touching earlier versions`, () => {
-    const [v2Major] = v2.split('.').map(Number);
-    const [v3Major] = v3.split('.').map(Number);
-    assert.equal(v3Major, v2Major, `v${v3} should share v${v2}'s major version (same author) — got major ${v3Major}`);
+  test(`'${project}' v${v3.version} (same author as v${v2.version}) is a minor bump and adds an analysis doc without touching earlier versions`, () => {
+    const [v2Major] = v2.version.split('.').map(Number);
+    const [v3Major] = v3.version.split('.').map(Number);
+    assert.equal(v3Major, v2Major, `v${v3.version} should share v${v2.version}'s major version (same author) — got major ${v3Major}`);
 
-    const v3Analysis = path.join(projectRoot, '.claude', 'version-history', project, `v${v3}`, 'CODE_ANALYSIS.md');
-    assert.ok(existsSync(v3Analysis), `missing ${v3Analysis} — CODE_ANALYSIS.md is a 2026-08-13+ requirement, only mandatory from v${v3} onward`);
+    const v3Analysis = snapshotPath(project, v3.version, v3.analysis);
+    assert.ok(existsSync(v3Analysis), `missing ${v3Analysis} — analysis doc is a 2026-08-13+ requirement, only mandatory from v${v3.version} onward`);
 
-    for (const version of [v1, v2]) {
-      const oldAnalysis = path.join(projectRoot, '.claude', 'version-history', project, `v${version}`, 'CODE_ANALYSIS.md');
-      assert.ok(
-        !existsSync(oldAnalysis),
-        `${oldAnalysis} should not exist — CODE_ANALYSIS.md postdates v${version} and must not be backfilled into an already-registered snapshot`,
-      );
+    for (const v of [v1, v2]) {
+      assert.equal(v.analysis, null, `test data inconsistency: v${v.version} should not have an analysis doc yet`);
     }
 
     const text = readFileSync(v3Analysis, 'utf8');
     for (const heading of ['## 구현 개요', '## 핵심 로직 설명', '## 이번 버전에서 바뀐 점과 이유', '## 알려진 제약 · 다음에 볼 사람이 알아야 할 것']) {
-      assert.ok(text.includes(heading), `v${v3} CODE_ANALYSIS.md for '${project}' missing heading '${heading}'`);
+      assert.ok(text.includes(heading), `v${v3.version} analysis doc for '${project}' missing heading '${heading}'`);
     }
   });
 
-  test(`'${project}' history.json has 3 entries: versions ${versions.join(', ')} with authors ${authors.join(', ')}`, () => {
+  test(`'${project}' v${v4.version} (same author as v${v3.version}) restructures into README.md/src/docs without touching earlier versions`, () => {
+    const [v3Major] = v3.version.split('.').map(Number);
+    const [v4Major] = v4.version.split('.').map(Number);
+    assert.equal(v4Major, v3Major, `v${v4.version} should share v${v3.version}'s major version (same author) — got major ${v4Major}`);
+
+    for (const rel of ['README.md', path.join('src', 'main.py'), path.join('docs', 'report.md')]) {
+      const p = snapshotPath(project, v4.version, rel);
+      assert.ok(existsSync(p), `missing ${p}`);
+    }
+
+    // v3(v2.1)의 옛 구조(main.py/MANUAL.md/CODE_ANALYSIS.md가 루트)는 그대로 남아 있어야 한다.
+    for (const rel of ['main.py', 'MANUAL.md', 'CODE_ANALYSIS.md']) {
+      const p = snapshotPath(project, v3.version, rel);
+      assert.ok(existsSync(p), `v${v3.version} snapshot should retain its original flat layout at ${p}`);
+    }
+    // v4(v2.2)에는 옛 이름의 파일이 루트에 남아있으면 안 된다(구조 자체가 바뀐 것이므로).
+    for (const rel of ['main.py', 'MANUAL.md', 'CODE_ANALYSIS.md']) {
+      const p = snapshotPath(project, v4.version, rel);
+      assert.ok(!existsSync(p), `v${v4.version} should not have the old flat-layout file at ${p}`);
+    }
+  });
+
+  test(`'${project}' history.json has 4 entries: versions ${versions.map((v) => v.version).join(', ')} with authors ${versions.map((v) => v.author).join(', ')}`, () => {
     const historyPath = path.join(projectRoot, '.claude', 'version-history', project, 'history.json');
     assert.ok(existsSync(historyPath), `missing ${historyPath}`);
 
     const history = JSON.parse(readFileSync(historyPath, 'utf8'));
-    assert.equal(history.versions.length, 3, `expected 3 version entries for '${project}'`);
+    assert.equal(history.versions.length, 4, `expected 4 version entries for '${project}'`);
 
     const sorted = [...history.versions].sort((a, b) => {
       const [aMajor, aMinor] = a.version.split('.').map(Number);
       const [bMajor, bMinor] = b.version.split('.').map(Number);
       return aMajor - bMajor || aMinor - bMinor;
     });
-    assert.deepEqual(sorted.map((v) => v.version), versions);
-    assert.deepEqual(sorted.map((v) => v.author), authors);
+    assert.deepEqual(sorted.map((v) => v.version), versions.map((v) => v.version));
+    assert.deepEqual(sorted.map((v) => v.author), versions.map((v) => v.author));
   });
 }
 
@@ -162,7 +193,7 @@ test('version-history-guard allows a path outside .claude/version-history/', () 
     cwd: projectRoot,
     tool_name: 'Edit',
     tool_input: {
-      file_path: path.join(projectRoot, 'samples', 'display-defect-rate', 'main.py'),
+      file_path: path.join(projectRoot, 'samples', 'display-defect-rate', 'src', 'main.py'),
       old_string: 'x',
       new_string: 'y',
     },
@@ -189,44 +220,33 @@ test('dashboard generator produces index.html listing every project, version, an
   assert.ok(existsSync(dashboardPath), `missing ${dashboardPath}`);
 
   const html = readFileSync(dashboardPath, 'utf8');
-  for (const { project, authors } of CASES) {
+  for (const { project, versions } of CASES) {
     assert.ok(html.includes(project), `dashboard missing project name '${project}'`);
-    for (const author of authors) {
+    for (const { author } of versions) {
       assert.ok(html.includes(`>${author}<`), `dashboard missing author '${author}' for '${project}'`);
     }
   }
 
+  // "코드"·"매뉴얼" 링크는 더 이상 만들지 않는다 — GitHub 폴더 페이지에서
+  // README.md는 자동 렌더링되고 src/의 코드는 폴더를 열면 바로 보이기 때문.
+  assert.ok(!html.includes('>코드<'), 'dashboard should no longer render a "코드" link');
+  assert.ok(!html.includes('>매뉴얼<'), 'dashboard should no longer render a "매뉴얼" link');
+
   const GITHUB_REPO_URL = 'https://github.com/nampluskr/workflow-hub';
   for (const { project, versions } of CASES) {
-    const [v1, v2, v3] = versions;
+    for (const v of versions) {
+      assert.ok(html.includes(`>v${v.version}<`), `dashboard missing v${v.version} badge for '${project}'`);
 
-    for (const version of versions) {
-      assert.ok(html.includes(`>v${version}<`), `dashboard missing v${version} badge for '${project}'`);
+      const snap = `.claude/version-history/${project}/v${v.version}`;
+      assert.ok(
+        html.includes(`${GITHUB_REPO_URL}/tree/main/${snap}`),
+        `dashboard missing GitHub tree link for ${snap}`,
+      );
 
-      const snapshotPath = `.claude/version-history/${project}/v${version}`;
-      assert.ok(
-        html.includes(`${GITHUB_REPO_URL}/blob/main/${snapshotPath}/main.py`),
-        `dashboard missing GitHub code link for ${snapshotPath}`,
-      );
-      assert.ok(
-        html.includes(`${GITHUB_REPO_URL}/blob/main/${snapshotPath}/MANUAL.md`),
-        `dashboard missing GitHub manual link for ${snapshotPath}`,
-      );
-      assert.ok(
-        html.includes(`${GITHUB_REPO_URL}/tree/main/${snapshotPath}`),
-        `dashboard missing GitHub tree link for ${snapshotPath}`,
-      );
-    }
-
-    const v3AnalysisUrl = `${GITHUB_REPO_URL}/blob/main/.claude/version-history/${project}/v${v3}/CODE_ANALYSIS.md`;
-    assert.ok(html.includes(v3AnalysisUrl), `dashboard missing v${v3} analysis link for '${project}'`);
-
-    for (const version of [v1, v2]) {
-      const oldAnalysisUrl = `${GITHUB_REPO_URL}/blob/main/.claude/version-history/${project}/v${version}/CODE_ANALYSIS.md`;
-      assert.ok(
-        !html.includes(oldAnalysisUrl),
-        `dashboard should not link an analysis doc for v${version} of '${project}' (it doesn't exist in that snapshot)`,
-      );
+      const analysisUrl = v.analysis ? `${GITHUB_REPO_URL}/blob/main/${snap}/${v.analysis.replaceAll('\\', '/')}` : null;
+      if (analysisUrl) {
+        assert.ok(html.includes(analysisUrl), `dashboard missing analysis link for v${v.version} of '${project}'`);
+      }
     }
   }
 });

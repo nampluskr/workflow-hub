@@ -9,14 +9,14 @@
 
 ## 실행 방법
 ```
-python samples/display-defect-rate/main.py
+python samples/display-defect-rate/src/main.py
 ```
 입력·출력 경로를 바꾸려면:
 ```
-python samples/display-defect-rate/main.py <입력.csv> <출력.csv>
+python samples/display-defect-rate/src/main.py <입력.csv> <출력.csv>
 ```
 
 ## 수정 시 참고
-- `main.py` — 전체 로직. `load_rows`(CSV 읽기) → `aggregate`(설비/모델별 합산 및 불량율 계산) → `print_table`/`write_report`(출력) → `overall_defect_rate`(전체 평균, v2에서 추가) 순서로 구성.
+- `src/main.py` — 전체 로직. `load_rows`(CSV 읽기) → `aggregate`(설비/모델별 합산 및 불량율 계산) → `print_table`/`write_report`(출력) → `overall_defect_rate`(전체 평균, v2에서 추가) 순서로 구성.
 - `data/production.csv` — 샘플 입력 데이터. 실제 데이터로 교체 시 열 이름(`facility_id, model_id, produced_qty, defect_qty`)을 유지해야 한다.
 - 집계 기준(설비/모델)을 늘리려면 `aggregate` 호출을 추가하고 `print_table`/`write_report`에 대응하는 출력을 더한다.

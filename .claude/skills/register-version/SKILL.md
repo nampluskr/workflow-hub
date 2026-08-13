@@ -5,7 +5,7 @@ description: samples/<프로젝트명>/의 현재 코드+매뉴얼 상태를 새
 
 # 버전 등록
 
-`samples/<프로젝트명>/`의 현재 상태(코드 + `MANUAL.md`)를 새 버전으로 얼려서 보관하고, 이력 SSOT(`.claude/version-history/<프로젝트명>/history.json`)에 작업자·날짜·변경 요약을 기록한다.
+`samples/<프로젝트명>/`의 현재 상태(코드 + 문서, CLAUDE.md §1의 `README.md`/`src/`/`docs/` 구조)를 새 버전으로 얼려서 보관하고, 이력 SSOT(`.claude/version-history/<프로젝트명>/history.json`)에 작업자·날짜·변경 요약을 기록한다.
 
 ## 절차
 
