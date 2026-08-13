@@ -167,6 +167,16 @@ Phase 3 완료·승인 이후, 「되면 좋은」 LLM wiki(③) 착수를 논�
   4. 각 페이지가 report.md 절 제목·코드 위치를 실제와 일치하게 인용한다 — 사람이 눈으로 최종 확인(⑤의 "사람이 눈으로 보는 것")
 - 아직 정하지 않은 것: `wiki-writer.md` 서브에이전트 정의의 세부 프롬프트(페이지 템플릿 문구 등), `npm test`로 옮길 수 있는 기계 판정 범위(페이지 존재·링크 여부는 가능, 내용 정확성은 Codex/사람 몫으로 남을 가능성 높음).
 
+**Phase 4 실행 기록 (2026-08-13, 세션 재시작 후)**
+
+- `.claude/agents/wiki-writer.md`를 신설하고, `register-version` 스킬 절차(3단계로 `version-navigator` 다음에 삽입)와 `CLAUDE.md` §7에 반영했다.
+- 두 샘플 모두 `version-navigator` → `wiki-writer` 순으로 실제 실행해 `wiki/index.md` + 기능별 페이지를 생성했다(`display-defect-rate` 3개, `display-image-inspection` 4개 — 완료 기준 1·2 충족).
+- **Codex 반박 검증에서 문제 1건**: `estimate_background.md`가 "핵심 로직 설명" 절이 아닌 "알려진 제약" 절 내용까지 섞어 인용해, 페이지 상단 표기("설명된 버전: … 핵심 로직 설명")와 실제 내용이 어긋났다. 해당 문단을 제거해 고치고, `wiki-writer.md`에 "다른 절 내용을 섞지 않는다"는 규칙을 명시적으로 강화했다(완료 기준 3 충족, 재검증 통과).
+- 검증용 질문 세트 6개 중 함정 질문 2개(`load_rows`, `main`)는 해당 페이지가 애초에 생성되지 않아 "인덱스에 없음" 조건을 만족했고, 정상 질문들은 페이지 내용이 report.md 근거를 그대로 담고 있음을 확인했다.
+- `test/phase4-wiki.test.mjs` 신설(10 tests) — wiki/index.md 존재, NAVIGATION.md 행 수와 페이지 수 일치, 함정 이름의 페이지 미생성, 각 페이지의 버전·코드 위치 인용, index.md 링크 존재를 기계로 검증한다. `npm test` 40/40.
+- `register-version`으로 두 샘플 모두 **v2.5**를 등록했다(직전과 같은 담당자: `display-defect-rate` B, `display-image-inspection` D → 마이너 증가). `test/phase2-versioning.test.mjs`의 CASES에 v2.5 항목을 추가해 이력 건수 회귀 테스트를 최신화했다.
+- **완료 기준 4("사람이 눈으로 최종 확인")는 아직 남아 있다** — 위 자동 검증까지 통과한 상태이며, 사람의 최종 확인·승인을 기다린다.
+
 ## ⑤ 완료를 판정할 방법 (검증 게이트)
 - 기계가 판정하는 것:
   - **`npm test`** (`node --test`) — ④ Phase 0~3의 완료 조건 전부 (샘플 2/2, v1.0 잔존, 샘플별 이력 4건과 작업자 A·B·B·B / C·D·D·D, 대시보드 HTML에 버전·담당자·분석 링크 포함, 브리핑 네 항목 2/2)

@@ -94,7 +94,7 @@
     },
     {
       "id": "LB-005",
-      "status": "in_progress",
+      "status": "needs_info",
       "priority": "P2",
       "category": "phase4",
       "title": "Phase 4 - LLM wiki 정적 페이지 생성",
@@ -106,7 +106,7 @@
       ],
       "doc": "PLAN.md",
       "done_at": null,
-      "note": "wiki-writer.md 서브에이전트 정의 + register-version 스킬 절차(3단계 추가) + CLAUDE.md §7 문서화 완료(2026-08-13). 다음: 새 세션에서 wiki-writer 인식 확인 후 두 샘플에 실제 실행 -> 검증용 질문 6개로 확인 -> Codex 반박 검증 -> v2.5 등록"
+      "note": "구현·실행 완료: wiki-writer 신설, 두 샘플 wiki/ 생성 후 v2.5 등록(B/D), Codex 반박 검증 통과(1건 발견/수정), test/phase4-wiki.test.mjs 신설, npm test 40/40. 남은 것: 완료 기준 4 - 사람의 최종 눈 확인·승인"
     }
   ]
 }

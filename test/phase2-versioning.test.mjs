@@ -23,6 +23,7 @@ const CASES = [
       { version: '2.2', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
       { version: '2.3', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
       { version: '2.4', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+      { version: '2.5', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
     ],
   },
   {
@@ -35,6 +36,7 @@ const CASES = [
       { version: '2.2', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
       { version: '2.3', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
       { version: '2.4', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+      { version: '2.5', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
     ],
   },
 ];
