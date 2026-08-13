@@ -97,8 +97,8 @@
       "status": "todo",
       "priority": "P2",
       "category": "phase4",
-      "title": "Phase 4 - LLM wiki 대화형 Q&A 서브에이전트",
-      "summary": "NAVIGATION.md만 읽고 report.md 절/코드 위치로 점프하는 샘플별 Q&A 서브에이전트. 착수 전 - 완료 기준 초안은 PLAN.md Phase 4 참고, 사람 승인 필요",
+      "title": "Phase 4 - LLM wiki 정적 페이지 생성",
+      "summary": "samples/<name>/wiki/index.md + 기능별 페이지(NAVIGATION.md 행 1개=페이지 1개) 생성. register-version 직전 생성해 버전 스냅샷에 포함. 착수 전 - 완료 기준 초안은 PLAN.md Phase 4 참고, 사람 승인 필요",
       "where": null,
       "parent": null,
       "deps": [
@@ -106,7 +106,7 @@
       ],
       "doc": "PLAN.md",
       "done_at": null,
-      "note": "되면 좋은 항목에서 2026-08-13 정식 Phase로 승격. 완료 기준 미확정"
+      "note": "대화형 Q&A에서 정적 위키 페이지 산출물로 2026-08-13 방향 확정(카파시/DeepWiki류 정의와 정렬). 완료 기준 미확정"
     }
   ]
 }
