@@ -17,6 +17,13 @@ function escapeHtml(str) {
     .replaceAll('"', '&quot;');
 }
 
+// version 문자열 "major.minor"(예: "2.1")를 비교해 내림차순 정렬한다.
+function compareVersionDesc(a, b) {
+  const [aMajor, aMinor] = String(a.version).split('.').map(Number);
+  const [bMajor, bMinor] = String(b.version).split('.').map(Number);
+  return bMajor - aMajor || bMinor - aMinor;
+}
+
 function extractSection(manualText, heading) {
   const lines = manualText.split('\n');
   const startIdx = lines.findIndex((line) => line.trim() === heading);
@@ -45,7 +52,7 @@ function loadProjects() {
       ? extractSection(readFileSync(manualPath, 'utf8'), '## 용도')
       : '';
 
-    const versions = [...history.versions].sort((a, b) => b.version - a.version);
+    const versions = [...history.versions].sort(compareVersionDesc);
     return { name, purpose, versions };
   });
 }
@@ -53,9 +60,16 @@ function loadProjects() {
 function renderProjectCard(project) {
   const rows = project.versions.map((v) => {
     const snapshotPath = `.claude/version-history/${project.name}/v${v.version}`;
+    const localSnapshotDir = path.join(historyRoot, project.name, `v${v.version}`);
     const codeUrl = `${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/main.py`;
     const manualUrl = `${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/MANUAL.md`;
     const githubUrl = `${GITHUB_REPO_URL}/tree/${GITHUB_BRANCH}/${snapshotPath}`;
+
+    const hasAnalysis = existsSync(path.join(localSnapshotDir, 'CODE_ANALYSIS.md'));
+    const analysisLink = hasAnalysis
+      ? ` · <a href="${escapeHtml(`${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/CODE_ANALYSIS.md`)}" target="_blank" rel="noopener">분석</a>`
+      : '';
+
     return `
         <tr>
           <td class="version-badge">v${escapeHtml(v.version)}</td>
@@ -64,7 +78,7 @@ function renderProjectCard(project) {
           <td>${escapeHtml(v.summary)}</td>
           <td class="links">
             <a href="${escapeHtml(codeUrl)}" target="_blank" rel="noopener">코드</a>
-            · <a href="${escapeHtml(manualUrl)}" target="_blank" rel="noopener">매뉴얼</a>
+            · <a href="${escapeHtml(manualUrl)}" target="_blank" rel="noopener">매뉴얼</a>${analysisLink}
             · <a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener">깃헙</a>
           </td>
         </tr>`;
@@ -81,7 +95,7 @@ function renderProjectCard(project) {
       ${project.purpose ? `<p class="purpose">${escapeHtml(project.purpose)}</p>` : ''}
       <table>
         <thead>
-          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th><th>코드 · 매뉴얼 · 깃헙</th></tr>
+          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th><th>코드 · 매뉴얼 · (분석) · 깃헙</th></tr>
         </thead>
         <tbody>${rows || '<tr><td colspan="5" class="empty">등록된 버전이 없습니다</td></tr>'}</tbody>
       </table>

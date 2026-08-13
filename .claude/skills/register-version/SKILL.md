@@ -16,9 +16,9 @@ description: samples/<프로젝트명>/의 현재 코드+매뉴얼 상태를 새
 node tools/version.mjs register --project <프로젝트명> --author <작업자> --summary "<변경 요약>"
 ```
 
-3. 실행 결과로 `Registered <프로젝트명> v<N> (<작업자>)`가 출력되면 성공이다. CLI가 알아서:
-   - 다음 버전 번호를 계산하고 (기존 최대 버전 + 1)
-   - `samples/<프로젝트명>/`의 현재 상태를 `.claude/version-history/<프로젝트명>/v<N>/`에 스냅샷으로 복사하고 (기존 버전 스냅샷은 건드리지 않음)
+3. 실행 결과로 `Registered <프로젝트명> v<메이저.마이너> (<작업자>)`가 출력되면 성공이다. CLI가 알아서:
+   - 다음 버전 번호를 계산하고 — **직전 등록자와 이번 작업자가 같으면 마이너 증가**(`v1.0`→`v1.1`), **다르면 메이저 증가하고 마이너는 0으로**(`v1.x`→`v2.0`). 최초 등록은 항상 `v1.0`. (CLAUDE.md §4 참고 — 사람이 번호를 직접 정하지 않는다)
+   - `samples/<프로젝트명>/`의 현재 상태를 `.claude/version-history/<프로젝트명>/v<메이저.마이너>/`에 스냅샷으로 복사하고 (기존 버전 스냅샷은 건드리지 않음)
    - `history.json`에 `{version, author, date, summary}` 항목을 추가한다
 4. 등록 후 `node tools/backlog.mjs validate`나 `npm test`로 다른 것이 깨지지 않았는지 확인할 필요는 없다 — 버전 이력은 백로그와 별개의 SSOT다. 다만 Phase 2 완료 조건을 확인하려면 `npm test`를 돌린다.
 

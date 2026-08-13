@@ -38,12 +38,41 @@ async function loadHistory(project) {
   }
 }
 
-function nextVersionNumber(history) {
-  let max = 0;
+// version 문자열 "major.minor"를 {major, minor}로 변환한다.
+function parseVersion(v) {
+  const [major, minor] = String(v).split('.').map(Number);
+  return { major, minor: minor ?? 0 };
+}
+
+function formatVersion({ major, minor }) {
+  return `${major}.${minor}`;
+}
+
+// 이력에서 가장 높은 (major, minor) 항목을 찾는다. 없으면 null.
+function latestEntry(history) {
+  let latest = null;
+  let latestParsed = null;
   for (const entry of history.versions) {
-    if (typeof entry.version === 'number' && entry.version > max) max = entry.version;
+    const parsed = parseVersion(entry.version);
+    if (!latestParsed || parsed.major > latestParsed.major || (parsed.major === latestParsed.major && parsed.minor > latestParsed.minor)) {
+      latest = entry;
+      latestParsed = parsed;
+    }
   }
-  return max + 1;
+  return latest;
+}
+
+// 담당자 변경 = 메이저 버전 증가(vN.0), 같은 담당자의 연속 수정 = 마이너 버전 증가(vN.M -> vN.(M+1)).
+// 최초 등록은 언제나 v1.0이다.
+function nextVersion(history, author) {
+  const latest = latestEntry(history);
+  if (!latest) return { major: 1, minor: 0 };
+
+  const parsed = parseVersion(latest.version);
+  if (latest.author === author) {
+    return { major: parsed.major, minor: parsed.minor + 1 };
+  }
+  return { major: parsed.major + 1, minor: 0 };
 }
 
 async function runRegister({ project, author, summary }) {
@@ -54,7 +83,7 @@ async function runRegister({ project, author, summary }) {
   }
 
   const history = await loadHistory(project);
-  const version = nextVersionNumber(history);
+  const version = formatVersion(nextVersion(history, author));
   const snapshotDir = snapshotDirFor(project, version);
 
   if (existsSync(snapshotDir)) {

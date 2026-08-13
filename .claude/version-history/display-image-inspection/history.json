@@ -2,16 +2,22 @@
   "project": "display-image-inspection",
   "versions": [
     {
-      "version": 1,
+      "version": "1.0",
       "author": "C",
       "date": "2026-08-13",
       "summary": "초기 작성 - PGM 검사 이미지 불량 위치 분석 스크립트"
     },
     {
-      "version": 2,
+      "version": "2.0",
       "author": "D",
       "date": "2026-08-13",
       "summary": "불량 평균 크기(px) 통계 추가"
+    },
+    {
+      "version": "2.1",
+      "author": "D",
+      "date": "2026-08-13",
+      "summary": "상세 코드 분석 문서(CODE_ANALYSIS.md) 추가"
     }
   ]
 }
