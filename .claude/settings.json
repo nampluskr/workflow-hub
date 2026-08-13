@@ -1,0 +1,38 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/backlog-json-guard.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/destructive-command-guard.mjs"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/test-verify-check.mjs",
+            "asyncRewake": true,
+            "timeout": 120,
+            "statusMessage": "npm test 실행 중...",
+            "rewakeSummary": "npm test 실패 — 수정 필요"
+          }
+        ]
+      }
+    ]
+  }
+}

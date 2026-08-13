@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "backlog": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "mcp/server.mjs"
+      ],
+      "env": {}
+    }
+  }
+}

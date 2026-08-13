@@ -1,0 +1,95 @@
+{
+  "$schema_version": "1",
+  "meta": {
+    "updated": "2026-08-13",
+    "context_doc": "PLAN.md",
+    "note": "workflow-hub 전용 백로그. day2 backlog-cli-lab의 backlog.json과 무관하며, 구현 중 Phase 추적 전용이다(완성된 도구의 제품 기능이 아님)."
+  },
+  "enums": {
+    "status": [
+      "todo",
+      "in_progress",
+      "blocked",
+      "needs_info",
+      "done",
+      "cancelled"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3",
+      null
+    ],
+    "category": [
+      "phase0",
+      "phase1",
+      "phase2",
+      "phase3"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "LB-001",
+      "status": "in_progress",
+      "priority": "P0",
+      "category": "phase0",
+      "title": "Phase 0 - git init + 프로젝트 전용 backlog MCP 구성",
+      "summary": "git 저장소 초기화, day2 backlog CLI/MCP를 이 프로젝트 소유로 독립 등록",
+      "where": "mcp/ src/ tools/ backlog.json .mcp.json",
+      "parent": null,
+      "deps": [],
+      "doc": "PLAN.md",
+      "done_at": null,
+      "note": null
+    },
+    {
+      "id": "LB-002",
+      "status": "todo",
+      "priority": "P0",
+      "category": "phase1",
+      "title": "Phase 1 - 형식 확정 + 샘플 프로젝트 2개",
+      "summary": "CLAUDE.md에 코드/매뉴얼/버전 작성 규칙을 정하고 샘플 2개를 만든다",
+      "where": null,
+      "parent": null,
+      "deps": [
+        "LB-001"
+      ],
+      "doc": "PLAN.md",
+      "done_at": null,
+      "note": null
+    },
+    {
+      "id": "LB-003",
+      "status": "todo",
+      "priority": "P0",
+      "category": "phase2",
+      "title": "Phase 2 - 버전 등록 스킬 + 이력 SSOT + version-history-guard hook",
+      "summary": "샘플 aaa에 v1(A)->v2(B) 등록, v1 보존/이력 2건/직접 Edit deny 검증",
+      "where": null,
+      "parent": null,
+      "deps": [
+        "LB-002"
+      ],
+      "doc": "PLAN.md",
+      "done_at": null,
+      "note": null
+    },
+    {
+      "id": "LB-004",
+      "status": "todo",
+      "priority": "P0",
+      "category": "phase3",
+      "title": "Phase 3 - 인수인계 브리핑 서브에이전트",
+      "summary": "샘플 2개 각각에 대해 브리핑(용도/입출력/수정 대상 파일/최근 버전 이력) 생성",
+      "where": null,
+      "parent": null,
+      "deps": [
+        "LB-003"
+      ],
+      "doc": "PLAN.md",
+      "done_at": null,
+      "note": null
+    }
+  ]
+}

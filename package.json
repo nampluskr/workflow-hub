@@ -1,0 +1,15 @@
+{
+  "name": "workflow-hub",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "backlog": "node tools/backlog.mjs",
+    "test": "node --test",
+    "verify": "npm test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  }
+}
