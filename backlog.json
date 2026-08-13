@@ -94,7 +94,7 @@
     },
     {
       "id": "LB-005",
-      "status": "needs_info",
+      "status": "done",
       "priority": "P2",
       "category": "phase4",
       "title": "Phase 4 - LLM wiki 정적 페이지 생성",
@@ -105,8 +105,8 @@
         "LB-004"
       ],
       "doc": "PLAN.md",
-      "done_at": null,
-      "note": "NAVIGATION.md/version-navigator 폐지, wiki-writer가 code-analyzer/report-history-analyzer를 직접 호출하는 오케스트레이터로 재정의(2026-08-13, 사용자 지적 - wiki/index.md와 중복). wiki/ 재생성 + Codex 재검증 통과, npm test 34/34. 아직 새 버전 미등록, 완료 기준 4(사람 최종 확인) 대기 중"
+      "done_at": "2026-08-13",
+      "note": "완료(2026-08-13). NAVIGATION.md 폐지, wiki-writer가 code-analyzer/report-history-analyzer를 직접 호출하는 오케스트레이터로 최종 구성. 두 샘플 v2.6 등록(B/D), 사람이 wiki/ 내용 직접 확인 후 승인. npm test 34/34"
     }
   ]
 }

@@ -42,6 +42,12 @@
       "author": "D",
       "date": "2026-08-13",
       "summary": "wiki-writer로 samples/display-image-inspection/wiki/ 생성 (Phase 4, NAVIGATION.md v2.4 인용 기반)"
+    },
+    {
+      "version": "2.6",
+      "author": "D",
+      "date": "2026-08-13",
+      "summary": "NAVIGATION.md/version-navigator 폐지, wiki-writer가 code-analyzer/report-history-analyzer를 직접 호출하도록 재정의 (Phase 4 재정의, 사람 최종 확인 완료)"
     }
   ]
 }

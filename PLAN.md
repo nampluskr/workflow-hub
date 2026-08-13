@@ -191,6 +191,13 @@ Phase 3 완료·승인 이후, 「되면 좋은」 LLM wiki(③) 착수를 논�
 - Codex 반박 검증(2차) — 인용 정확성·코드 위치 일치·금지 페이지 미생성·"설명된 버전"이 최고 등록 버전(v2.5)과 일치함을 확인, 문제 없음.
 - 이 변경 자체는 아직 새 버전으로 등록하지 않았다(작업 사본에만 반영) — 등록 여부는 사람 확인 후 진행한다.
 
+**Phase 4 완료 승인 (2026-08-13, 사람 확인 완료)**
+
+- 사람이 `samples/display-defect-rate/wiki/`, `samples/display-image-inspection/wiki/`를 직접 확인 — 완료 기준 4 충족.
+- `register-version`으로 두 샘플 모두 **v2.6**을 등록했다(직전과 같은 담당자: `display-defect-rate` B, `display-image-inspection` D → 마이너 증가). `v2.6` 스냅샷부터는 `NAVIGATION.md`가 없고 `wiki/`만 있다(예고한 대로).
+- `test/phase2-versioning.test.mjs`의 CASES에 v2.6 항목을 추가해 이력 건수 회귀 테스트를 최신화했다. `npm test` 34/34.
+- **Phase 4 완료.** `backlog.json` LB-005를 `done`으로 전환.
+
 ## ⑤ 완료를 판정할 방법 (검증 게이트)
 - 기계가 판정하는 것:
   - **`npm test`** (`node --test`) — ④ Phase 0~3의 완료 조건 전부 (샘플 2/2, v1.0 잔존, 샘플별 이력 4건과 작업자 A·B·B·B / C·D·D·D, 대시보드 HTML에 버전·담당자·분석 링크 포함, 브리핑 네 항목 2/2)
