@@ -77,7 +77,7 @@
     },
     {
       "id": "LB-004",
-      "status": "todo",
+      "status": "done",
       "priority": "P0",
       "category": "phase3",
       "title": "Phase 3 - 인수인계 브리핑 서브에이전트",
@@ -88,7 +88,7 @@
         "LB-003"
       ],
       "doc": "PLAN.md",
-      "done_at": null,
+      "done_at": "2026-08-13",
       "note": null
     }
   ]
