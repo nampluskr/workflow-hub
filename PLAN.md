@@ -151,8 +151,12 @@ Phase 3 완료·승인 이후, 「되면 좋은」 LLM wiki(③) 착수를 논�
   ```
   - 위치는 `README.md`/`src/`/`docs/`와 같은 레벨(`samples/<name>/wiki/`) — 나중에 샘플이 개별 GitHub 레포가 됐을 때 폴더째로 그대로 브라우징된다.
   - 페이지 내용은 그 행이 가리키는 report.md 절 인용 + "왜 이렇게 짰는지" 설명 + 코드 위치만 담는다. NAVIGATION.md·report.md에 없는 내용은 지어내지 않는다.
-  - 생성 시점은 `NAVIGATION.md`와 같다 — **`register-version` 직전**에 생성해 그 버전 스냅샷에 함께 얼어붙는다(Phase 3에서 `BRIEFING.md`가 낡던 문제를 해소한 방식을 그대로 재사용).
-  - 생성 주체는 `version-navigator`를 확장하거나 그 다음에 이어 호출되는 새 서브에이전트(가칭 `wiki-writer`) — 아직 미정, 착수 시 결정.
+  - 생성 시점은 `NAVIGATION.md`와 같다 — **`register-version` 직전**(사용자 확인, 2026-08-13)에 생성해 그 버전 스냅샷에 함께 얼어붙는다(Phase 3에서 `BRIEFING.md`가 낡던 문제를 해소한 방식을 그대로 재사용).
+- **에이전트 구조 (확정)**: 기존 Phase 3의 3개 서브에이전트(`code-analyzer`/`report-history-analyzer`/`version-navigator`)는 **기능을 재정의하지 않는다** — 지금도 위치만 반환하고 내용을 옮겨 적지 않으므로(`report-history-analyzer`는 "v2.3 report.md 핵심 로직 설명"처럼 위치 한 줄만 반환, 파일도 안 씀) 그대로 재사용 가능하다. 대신 **4번째 서브에이전트 `wiki-writer`를 신설**한다.
+  - 입력: 방금 `version-navigator`가 쓴 `NAVIGATION.md`
+  - 동작: 각 행이 가리키는 report.md 절·코드 위치를 **그 지점만** 다시 읽어(이 프로젝트가 이미 쓰는 "정확한 위치만 알면 그 지점만 읽는다" 원칙 재사용) `samples/<name>/wiki/<주제>.md` + `index.md`를 쓴다
+  - 호출 순서: `register-version` 절차 안에서 `version-navigator`(NAVIGATION.md 작성) **바로 다음, `tools/version.mjs register` 실행 직전**에 호출 — NAVIGATION.md와 동일한 타이밍 규칙을 그대로 적용
+  - `register-version` 스킬 절차·`CLAUDE.md` §6에도 이 4번째 단계를 반영해야 한다(착수 시 실제 반영)
 - **검증용 예상 질문 세트 (확정, 샘플당 3개)** — 완료 기준에서 위키 페이지가 이 질문에 정확히 답하는 내용을 담고 있는지 확인하는 재료로 쓴다. "함정" 질문은 NAVIGATION.md/report.md "핵심 로직 설명" 절 밖의 이름을 물어, 위키가 지어내지 않고 근거 없음을 인정하는지 본다.
   - `display-defect-rate`: ① `aggregate`가 설비별·모델별 집계를 같은 함수 하나로 처리하는 이유(→ `aggregate` 행) ② `print_table`/`write_report`를 나눈 이유(→ 해당 행) ③ [함정] `load_rows`의 CSV 컬럼 누락 처리(→ NAVIGATION.md에 행 없음, "없다"가 정답)
   - `display-image-inspection`: ① `estimate_background`가 평균 대신 중앙값을 쓴 이유(→ 해당 행) ② `find_defect_clusters`가 재귀 대신 스택을 쓴 이유(→ 해당 행) ③ [함정] `main`의 전체 흐름 제어(→ NAVIGATION.md "핵심 로직 설명" 밖, "없다"가 정답)
@@ -161,7 +165,7 @@ Phase 3 완료·승인 이후, 「되면 좋은」 LLM wiki(③) 착수를 논�
   2. `index.md`가 모든 페이지로의 링크를 포함한다
   3. 위 예상 질문 세트 6개에 대해 해당 페이지 내용이 올바르게 답하는지, 함정 질문(각 샘플 ③번)에서 근거 없는 내용을 지어내지 않았는지 **Codex 반박 검증**을 통과한다
   4. 각 페이지가 report.md 절 제목·코드 위치를 실제와 일치하게 인용한다 — 사람이 눈으로 최종 확인(⑤의 "사람이 눈으로 보는 것")
-- 아직 정하지 않은 것: 서브에이전트/생성 스크립트 이름과 위치, 호출 방식(스킬로 감쌀지 `register-version` 절차에 편입할지), `npm test`로 옮길 수 있는 기계 판정 범위(페이지 존재·링크 여부는 가능, 내용 정확성은 Codex/사람 몫으로 남을 가능성 높음).
+- 아직 정하지 않은 것: `wiki-writer.md` 서브에이전트 정의의 세부 프롬프트(페이지 템플릿 문구 등), `npm test`로 옮길 수 있는 기계 판정 범위(페이지 존재·링크 여부는 가능, 내용 정확성은 Codex/사람 몫으로 남을 가능성 높음).
 
 ## ⑤ 완료를 판정할 방법 (검증 게이트)
 - 기계가 판정하는 것:

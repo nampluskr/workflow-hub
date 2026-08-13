@@ -106,7 +106,7 @@
       ],
       "doc": "PLAN.md",
       "done_at": null,
-      "note": "대화형 Q&A에서 정적 위키 페이지 산출물로 2026-08-13 방향 확정(카파시/DeepWiki류 정의와 정렬). 완료 기준 미확정"
+      "note": "대화형 Q&A에서 정적 위키 페이지 산출물로 방향 확정. 에이전트 구조도 확정: 기존 3개(code-analyzer/report-history-analyzer/version-navigator)는 재정의 없이 재사용, 4번째 wiki-writer를 신설해 register-version 직전(NAVIGATION.md 작성 직후)에 호출. 세부 프롬프트·완료 기준은 착수 시 확정"
     }
   ]
 }
