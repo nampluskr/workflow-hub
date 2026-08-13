@@ -74,7 +74,7 @@ function renderProjectCard(project) {
         ? 'CODE_ANALYSIS.md'
         : null;
     const analysisLink = analysisRelPath
-      ? `<a href="${escapeHtml(`${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/${analysisRelPath}`)}" target="_blank" rel="noopener">분석</a> · `
+      ? `<a href="${escapeHtml(`${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/${analysisRelPath}`)}" target="_blank" rel="noopener">보고서</a> · `
       : '';
 
     return `
@@ -84,7 +84,7 @@ function renderProjectCard(project) {
           <td>${escapeHtml(v.date)}</td>
           <td>${escapeHtml(v.summary)}</td>
           <td class="links">
-            ${analysisLink}<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener">깃헙</a>
+            ${analysisLink}<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener">코드</a>
           </td>
         </tr>`;
   }).join('');
@@ -100,7 +100,7 @@ function renderProjectCard(project) {
       ${project.purpose ? `<p class="purpose">${escapeHtml(project.purpose)}</p>` : ''}
       <table>
         <thead>
-          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th><th>(분석) · 깃헙</th></tr>
+          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th><th>링크</th></tr>
         </thead>
         <tbody>${rows || '<tr><td colspan="5" class="empty">등록된 버전이 없습니다</td></tr>'}</tbody>
       </table>

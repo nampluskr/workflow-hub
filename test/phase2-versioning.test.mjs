@@ -227,10 +227,13 @@ test('dashboard generator produces index.html listing every project, version, an
     }
   }
 
-  // "코드"·"매뉴얼" 링크는 더 이상 만들지 않는다 — GitHub 폴더 페이지에서
-  // README.md는 자동 렌더링되고 src/의 코드는 폴더를 열면 바로 보이기 때문.
-  assert.ok(!html.includes('>코드<'), 'dashboard should no longer render a "코드" link');
-  assert.ok(!html.includes('>매뉴얼<'), 'dashboard should no longer render a "매뉴얼" link');
+  // 링크 라벨은 "보고서"(분석 문서, 있을 때만) · "코드"(저장소/폴더로 이동)
+  // 둘뿐이다 — "매뉴얼"은 GitHub 폴더 페이지에서 README.md가 자동
+  // 렌더링되므로 따로 두지 않고, 예전 라벨("분석"·"깃헙")도 더 이상 안 쓴다.
+  assert.ok(!html.includes('>매뉴얼<'), 'dashboard should not render a "매뉴얼" link');
+  assert.ok(!html.includes('>분석<'), 'dashboard should use the "보고서" label, not "분석"');
+  assert.ok(!html.includes('>깃헙<'), 'dashboard should use the "코드" label, not "깃헙"');
+  assert.ok(html.includes('>코드<'), 'dashboard should render a "코드" link');
 
   const GITHUB_REPO_URL = 'https://github.com/nampluskr/workflow-hub';
   for (const { project, versions } of CASES) {
