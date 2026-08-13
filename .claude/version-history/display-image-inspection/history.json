@@ -1,0 +1,17 @@
+{
+  "project": "display-image-inspection",
+  "versions": [
+    {
+      "version": 1,
+      "author": "C",
+      "date": "2026-08-13",
+      "summary": "초기 작성 - PGM 검사 이미지 불량 위치 분석 스크립트"
+    },
+    {
+      "version": 2,
+      "author": "D",
+      "date": "2026-08-13",
+      "summary": "불량 평균 크기(px) 통계 추가"
+    }
+  ]
+}

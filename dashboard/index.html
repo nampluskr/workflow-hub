@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>workflow-hub 버전 대시보드</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, "Segoe UI", sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background: #f7f7f8; color: #1a1a1a; }
+  h1 { font-size: 1.5rem; }
+  .meta { color: #666; margin-bottom: 2rem; }
+  .card { background: #fff; border: 1px solid #e2e2e2; border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+  .card header { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .card h2 { margin: 0; font-size: 1.15rem; }
+  .latest-badge { font-size: 0.8rem; color: #2563eb; background: #eff6ff; padding: 0.15rem 0.6rem; border-radius: 999px; white-space: nowrap; }
+  .purpose { color: #444; font-size: 0.92rem; margin: 0.5rem 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid #eee; }
+  th { color: #888; font-weight: 600; }
+  .version-badge { font-family: ui-monospace, monospace; font-weight: 600; }
+  .empty { color: #999; font-style: italic; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #14151a; color: #eaeaea; }
+    .card { background: #1d1e24; border-color: #2c2d33; }
+    th, td { border-color: #2c2d33; }
+    .purpose { color: #bbb; }
+    .latest-badge { background: #17233f; color: #7fa8ff; }
+  }
+</style>
+</head>
+<body>
+  <h1>workflow-hub 버전 대시보드</h1>
+  <p class="meta">생성일: 2026-08-13 · <code>node tools/dashboard.mjs</code>로 재생성</p>
+  
+    <section class="card">
+      <header>
+        <h2>display-defect-rate</h2>
+        <span class="latest-badge">최신 v2 · B</span>
+      </header>
+      <p class="purpose">스마트폰 디스플레이 생산 라인에서 나오는 설비별·모델별 생산량·불량 수량 데이터를 읽어, 설비 5개(EQ-01~05)와 디스플레이 모델 10종(DISP-01~10) 각각의 불량율을 집계한다. 특정 설비나 특정 모델에서 불량율이 튀는지 한눈에 보기 위한 도구다.</p>
+      <table>
+        <thead>
+          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th></tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="version-badge">v2</td>
+          <td>B</td>
+          <td>2026-08-13</td>
+          <td>전체 평균 불량율 출력 추가</td>
+        </tr>
+        <tr>
+          <td class="version-badge">v1</td>
+          <td>A</td>
+          <td>2026-08-13</td>
+          <td>초기 작성 - 설비별/모델별 불량율 집계 스크립트</td>
+        </tr></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <header>
+        <h2>display-image-inspection</h2>
+        <span class="latest-badge">최신 v2 · D</span>
+      </header>
+      <p class="purpose">스마트폰 디스플레이 검사 장비가 찍은 이미지에서 불량(얼룩·스크래치 등 배경과 밝기가 크게 다른 부분)의 위치를 찾는다. 이미지 10장을 한 번에 훑어 어느 이미지에 불량이 있는지, 화면 좌표 어디인지를 보고한다.</p>
+      <table>
+        <thead>
+          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th></tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="version-badge">v2</td>
+          <td>D</td>
+          <td>2026-08-13</td>
+          <td>불량 평균 크기(px) 통계 추가</td>
+        </tr>
+        <tr>
+          <td class="version-badge">v1</td>
+          <td>C</td>
+          <td>2026-08-13</td>
+          <td>초기 작성 - PGM 검사 이미지 불량 위치 분석 스크립트</td>
+        </tr></tbody>
+      </table>
+    </section>
+</body>
+</html>

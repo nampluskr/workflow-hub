@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "backlog": "node tools/backlog.mjs",
+    "version": "node tools/version.mjs",
+    "dashboard": "node tools/dashboard.mjs",
     "test": "node --test",
     "verify": "npm test"
   },

@@ -45,7 +45,7 @@
     },
     {
       "id": "LB-002",
-      "status": "todo",
+      "status": "done",
       "priority": "P0",
       "category": "phase1",
       "title": "Phase 1 - 형식 확정 + 샘플 프로젝트 2개",
@@ -56,12 +56,12 @@
         "LB-001"
       ],
       "doc": "PLAN.md",
-      "done_at": null,
+      "done_at": "2026-08-13",
       "note": null
     },
     {
       "id": "LB-003",
-      "status": "todo",
+      "status": "done",
       "priority": "P0",
       "category": "phase2",
       "title": "Phase 2 - 버전 등록 스킬 + 이력 SSOT + version-history-guard hook",
@@ -72,7 +72,7 @@
         "LB-002"
       ],
       "doc": "PLAN.md",
-      "done_at": null,
+      "done_at": "2026-08-13",
       "note": null
     },
     {

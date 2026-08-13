@@ -1,0 +1,17 @@
+{
+  "project": "display-defect-rate",
+  "versions": [
+    {
+      "version": 1,
+      "author": "A",
+      "date": "2026-08-13",
+      "summary": "초기 작성 - 설비별/모델별 불량율 집계 스크립트"
+    },
+    {
+      "version": 2,
+      "author": "B",
+      "date": "2026-08-13",
+      "summary": "전체 평균 불량율 출력 추가"
+    }
+  ]
+}

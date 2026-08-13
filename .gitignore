@@ -1,5 +1,6 @@
 node_modules/
 .claude/hook-events.log
 .claude/settings.local.json
+.serena/
 *.tmp
 *.log
