@@ -1,0 +1,6 @@
+# MIN_CLUSTER_SIZE
+
+**설명된 버전**: v2.4 report.md "핵심 로직 설명"
+**코드 위치**: src/main.py:19
+
+`MIN_CLUSTER_SIZE` 미만인 군집을 버리는 건, 픽셀 노이즈 한두 개가 우연히 임계값을 넘는 걸 진짜 불량과 구분하기 위해서다 — 이 두 상수(`DEVIATION_THRESHOLD`, `MIN_CLUSTER_SIZE`)가 사실상 이 알고리즘의 유일한 튜닝 지점이다.
