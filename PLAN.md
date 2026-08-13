@@ -127,7 +127,15 @@ Phase 3 완료·승인 이후, 「되면 좋은」 LLM wiki(③) 착수를 논�
 - **LLM wiki와의 관계 확정**: 나중에 만들 LLM wiki(대화형 Q&A, 프로젝트별 서브에이전트로 방향만 정함 — 구현은 이번 범위 아님)는 **`NAVIGATION.md`만 읽고** 거기서 가리키는 report.md 절·코드 위치로 점프하며, 특정 버전의 report.md 전체나 코드 전체를 다시 읽지 않는다. 그래서 `NAVIGATION.md`의 각 행은 구체적인 절 제목·줄 번호까지 가리켜야 한다.
 - `register-version` 스킬 절차에 "`tools/version.mjs register` 호출 전에 `version-navigator`를 먼저 호출" 단계를 추가했다(순서가 바뀌면 `NAVIGATION.md`가 그 버전 스냅샷에 포함되지 않는다).
 - `test/phase3-briefing.test.mjs`는 `test/phase3-navigation.test.mjs`로 교체했다. 미등록 산출물이었던 `BRIEFING.md` 두 파일은 삭제.
-- 진행 상태와 실행 결과는 이 문서가 아니라 세션 로그/커밋 이력에 남긴다 — 재시작 세션에서 이어서 실행 예정.
+
+**Phase 3 재정의 실행 기록 (2026-08-13, 세션 재시작 후)**
+
+- `version-navigator`가 실제로 하위 두 에이전트(`code-analyzer`, `report-history-analyzer`)를 이름으로 호출하는 중첩 구조가 **작동 확인됨.** 다만 첫 시도에서 하위 호출을 백그라운드로 보내고 기다리지 않은 채 자기 턴을 끝내는 버그가 있어, `version-navigator.md`에 "하위 호출은 동기적으로 기다린 뒤 `NAVIGATION.md`를 쓴 후에만 턴을 끝낸다"를 명시해 해결했다.
+- 두 샘플 모두 `NAVIGATION.md`를 생성해 `npm test`를 통과시키고 `v2.3`으로 등록했다(defect-rate: B, image-inspection: D — 직전과 같은 담당자라 마이너 증가).
+- **Codex 반박 검증에서 실제 문제 3건이 나왔다**: ①`display-image-inspection`이 report.md "핵심 로직 설명" 절 밖의 이름(`load_pgm`/`analyze_image`/`main`/`defect_sizes`)까지 행에 포함, ②`display-defect-rate`가 대표 버전을 최신이 아닌 더 오래된 버전으로 표기, ③`defect_sizes` 행이 코드 위치를 여러 줄로 병기. 지어낸 내용은 없었다(코드 위치·보고서 인용 자체는 전부 정확) — 계약 준수(§6 규칙) 문제였다.
+- `report-history-analyzer.md`/`version-navigator.md`에 규칙을 더 명시적으로 강화하고, 두 샘플의 `NAVIGATION.md`를 고쳐 `v2.4`로 재등록했다(v2.3 스냅샷은 결함 있는 상태 그대로 보존 — 이력 불변 원칙). `test/phase2-versioning.test.mjs`에 v2.3/v2.4 관련 회귀 테스트를 추가해 이 수정이 실제로 반영됐는지 기계로 확인한다.
+- **재검증에서 하나 더 나왔다**: `NAVIGATION.md`가 인용하는 "설명된 버전"이 항상 실제 최신 버전보다 한 단계 뒤처진다(v2.4를 등록하며 만든 문서가 v2.3까지만 인용). Codex는 이를 다시 반박했지만, **구조적으로 해소 불가능한 문제**라고 판단해 받아들이지 않았다 — `NAVIGATION.md`는 자신이 속할 버전이 등록되기 *전에* 만들어지므로 그 버전 번호를 아직 알 수 없다(무한 회귀). 이 특성을 CLAUDE.md §6과 `report-history-analyzer.md`에 명시적으로 문서화하는 것으로 마무리했다 — 사람에게 확인받은 결정이다.
+- `npm test` 30/30, `node tools/backlog.mjs validate` `VALID 4 task(s)`.
 
 ## ⑤ 완료를 판정할 방법 (검증 게이트)
 - 기계가 판정하는 것:

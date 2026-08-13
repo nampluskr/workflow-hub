@@ -24,6 +24,18 @@
       "author": "D",
       "date": "2026-08-13",
       "summary": "디렉터리 구조 재정리 - README.md/src/docs (개별 레포 전환 대비)"
+    },
+    {
+      "version": "2.3",
+      "author": "D",
+      "date": "2026-08-13",
+      "summary": "네비게이션 문서 방식 전환 (BRIEFING.md -> NAVIGATION.md, 3-에이전트 구조)"
+    },
+    {
+      "version": "2.4",
+      "author": "D",
+      "date": "2026-08-13",
+      "summary": "NAVIGATION.md 정확도 수정 (Codex 검증 지적 반영: 핵심 로직 설명 범위 준수, 단일 버전/위치 표기)"
     }
   ]
 }

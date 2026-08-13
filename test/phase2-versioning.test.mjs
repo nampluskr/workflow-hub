@@ -21,6 +21,8 @@ const CASES = [
       { version: '2.0', author: 'B', main: 'main.py', manual: 'MANUAL.md', analysis: null },
       { version: '2.1', author: 'B', main: 'main.py', manual: 'MANUAL.md', analysis: 'CODE_ANALYSIS.md' },
       { version: '2.2', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+      { version: '2.3', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+      { version: '2.4', author: 'B', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
     ],
   },
   {
@@ -31,6 +33,8 @@ const CASES = [
       { version: '2.0', author: 'D', main: 'main.py', manual: 'MANUAL.md', analysis: null },
       { version: '2.1', author: 'D', main: 'main.py', manual: 'MANUAL.md', analysis: 'CODE_ANALYSIS.md' },
       { version: '2.2', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+      { version: '2.3', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
+      { version: '2.4', author: 'D', main: 'src/main.py', manual: 'README.md', analysis: 'docs/report.md' },
     ],
   },
 ];
@@ -40,7 +44,7 @@ function snapshotPath(project, version, ...rest) {
 }
 
 for (const { project, v2OnlyMarker, versions } of CASES) {
-  const [v1, v2, v3, v4] = versions;
+  const [v1, v2, v3, v4, v5, v6] = versions;
 
   test(`'${project}' v${v1.version} snapshot exists and was not overwritten by v${v2.version}`, () => {
     const v1Main = snapshotPath(project, v1.version, v1.main);
@@ -109,12 +113,50 @@ for (const { project, v2OnlyMarker, versions } of CASES) {
     }
   });
 
-  test(`'${project}' history.json has 4 entries: versions ${versions.map((v) => v.version).join(', ')} with authors ${versions.map((v) => v.author).join(', ')}`, () => {
+  test(`'${project}' v${v5.version} (same author as v${v4.version}) adds NAVIGATION.md, generated before registration (Phase 3 redefinition)`, () => {
+    const [v4Major] = v4.version.split('.').map(Number);
+    const [v5Major] = v5.version.split('.').map(Number);
+    assert.equal(v5Major, v4Major, `v${v5.version} should share v${v4.version}'s major version (same author) — got major ${v5Major}`);
+
+    const v5Nav = snapshotPath(project, v5.version, 'NAVIGATION.md');
+    assert.ok(existsSync(v5Nav), `missing ${v5Nav} — version-navigator must run before tools/version.mjs register so NAVIGATION.md lands in this snapshot`);
+
+    // v4(v2.2)는 NAVIGATION.md 도입 이전 스냅샷이므로 없어야 정상이다(소급 적용 금지).
+    const v4Nav = snapshotPath(project, v4.version, 'NAVIGATION.md');
+    assert.ok(!existsSync(v4Nav), `v${v4.version} predates NAVIGATION.md — should not retroactively have it at ${v4Nav}`);
+  });
+
+  // v5(v2.3)의 NAVIGATION.md는 Codex 검증(2026-08-13)에서 두 가지 문제가 지적됐다 —
+  // ①"핵심 로직 설명"에 없는 이름까지 행에 넣음, ②코드 위치를 여러 줄로 병기함.
+  // v6(v2.4)에서 고쳤다. 이력 불변 원칙상 v5 스냅샷은 그 결함 있는 상태 그대로 남아야
+  // 하고, v6은 고쳐진 상태여야 한다 — 즉 두 스냅샷의 NAVIGATION.md는 서로 달라야 한다.
+  test(`'${project}' v${v6.version} (same author as v${v5.version}) fixes NAVIGATION.md accuracy issues found by Codex review without touching v${v5.version}'s snapshot`, () => {
+    const [v5Major] = v5.version.split('.').map(Number);
+    const [v6Major] = v6.version.split('.').map(Number);
+    assert.equal(v6Major, v5Major, `v${v6.version} should share v${v5.version}'s major version (same author) — got major ${v6Major}`);
+
+    const v5Nav = snapshotPath(project, v5.version, 'NAVIGATION.md');
+    const v6Nav = snapshotPath(project, v6.version, 'NAVIGATION.md');
+    assert.ok(existsSync(v6Nav), `missing ${v6Nav}`);
+    assert.ok(existsSync(v5Nav), `missing ${v5Nav} — v${v5.version}'s (flawed) snapshot must still exist, not be deleted`);
+
+    const v5Text = readFileSync(v5Nav, 'utf8');
+    const v6Text = readFileSync(v6Nav, 'utf8');
+    assert.notEqual(v6Text, v5Text, `v${v6.version} NAVIGATION.md for '${project}' should differ from v${v5.version}'s — the fix should be visible`);
+
+    // v6의 각 행은 코드 위치가 정확히 하나여야 한다(여러 줄 병기 금지).
+    for (const line of v6Text.split('\n').filter((l) => l.startsWith('|') && !l.startsWith('|---'))) {
+      const locationCells = line.match(/src\/main\.py:\d+/g) ?? [];
+      assert.ok(locationCells.length <= 1, `v${v6.version} NAVIGATION.md row should not list multiple code locations: ${line}`);
+    }
+  });
+
+  test(`'${project}' history.json has ${versions.length} entries: versions ${versions.map((v) => v.version).join(', ')} with authors ${versions.map((v) => v.author).join(', ')}`, () => {
     const historyPath = path.join(projectRoot, '.claude', 'version-history', project, 'history.json');
     assert.ok(existsSync(historyPath), `missing ${historyPath}`);
 
     const history = JSON.parse(readFileSync(historyPath, 'utf8'));
-    assert.equal(history.versions.length, 4, `expected 4 version entries for '${project}'`);
+    assert.equal(history.versions.length, versions.length, `expected ${versions.length} version entries for '${project}'`);
 
     const sorted = [...history.versions].sort((a, b) => {
       const [aMajor, aMinor] = a.version.split('.').map(Number);
