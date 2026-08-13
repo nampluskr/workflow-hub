@@ -109,6 +109,13 @@
 
 **Phase 3 — 인수인계 브리핑 서브에이전트** (2시간)
 - 완료: 샘플 2개 각각에 브리핑을 생성했을 때, 브리핑에 **네 항목**(프로그램 용도 / 입출력 / 수정 시 건드릴 파일 / 최근 버전 이력)이 모두 있는지 검사해 **2/2 통과**한다
+- **완료 기록 (2026-08-13, 사람 승인 완료, 커밋 `5e11253`)**
+  - `.claude/agents/handoff-briefing.md` 서브에이전트를 신설: `README.md` → `docs/report.md`(구버전은 `CODE_ANALYSIS.md`) → `history.json` → (있으면) `REQUEST.md` 순으로 읽고 `samples/<프로젝트명>/BRIEFING.md`를 생성한다. `CLAUDE.md` §1·§6에 `BRIEFING.md` 형식(네 섹션 고정 제목·순서)을 문서화했다.
+  - `test/phase3-briefing.test.mjs`로 완료 조건을 옮겼다 — 두 샘플 각각 네 섹션이 이 순서로 존재하고 **네 섹션 모두 내용이 비어있지 않은지**까지 검사(총 6 tests). `npm test` 24/24 통과.
+  - 두 샘플의 `BRIEFING.md`를 실제로 생성해 사람이 직접 읽고 확인 — README 재진술에 그치지 않고 `docs/report.md`의 "왜"를 반영했음을 확인.
+  - Codex(`codex exec --sandbox read-only`) 반박 검증: 브리핑 내용에 확인 가능한 환각 없음, 서브에이전트 정의가 CLAUDE.md §6과 일치. 지적된 문제 하나("수정 시 건드릴 파일" 섹션만 비어있음 검사, 나머지 세 섹션은 미검사)는 즉시 테스트를 고쳐 해소.
+  - **대시보드에는 `BRIEFING.md`를 연동하지 않기로 결정**: `docs/report.md`(권위 있는 기록)와 달리 `BRIEFING.md`는 에이전트가 만든 파생 문서라 재생성하지 않으면 낡는다 — 대시보드(개요/탐색 도구)에 고정 링크를 걸면 낡은 정보를 최신처럼 노출할 위험이 있다고 판단했다. 점검은 별도 도구 없이 필요할 때 파일을 직접 읽는다.
+  - `node tools/backlog.mjs update LB-004 --status done` 반영, `backlog.json` `VALID 4 task(s)`.
 
 ## ⑤ 완료를 판정할 방법 (검증 게이트)
 - 기계가 판정하는 것:
