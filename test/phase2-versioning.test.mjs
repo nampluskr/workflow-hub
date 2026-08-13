@@ -39,6 +39,17 @@ for (const { project, authors, v2OnlyMarker } of CASES) {
     assert.ok(v2Text.includes(v2OnlyMarker), `v2/main.py for '${project}' should contain '${v2OnlyMarker}'`);
   });
 
+  test(`'${project}' registers each author's own MANUAL.md per version, not just code`, () => {
+    for (const version of [1, 2]) {
+      const manualPath = path.join(projectRoot, '.claude', 'version-history', project, `v${version}`, 'MANUAL.md');
+      assert.ok(existsSync(manualPath), `missing ${manualPath} — each version snapshot must include the manual the author wrote for that version`);
+    }
+
+    const v1Manual = readFileSync(path.join(projectRoot, '.claude', 'version-history', project, 'v1', 'MANUAL.md'), 'utf8');
+    const v2Manual = readFileSync(path.join(projectRoot, '.claude', 'version-history', project, 'v2', 'MANUAL.md'), 'utf8');
+    assert.notEqual(v1Manual, v2Manual, `v1 and v2 MANUAL.md for '${project}' are identical — expected the v2 author to have updated it`);
+  });
+
   test(`'${project}' history.json has 2 entries with authors ${authors.join(', ')}`, () => {
     const historyPath = path.join(projectRoot, '.claude', 'version-history', project, 'history.json');
     assert.ok(existsSync(historyPath), `missing ${historyPath}`);
@@ -123,4 +134,23 @@ test('dashboard generator produces index.html listing every project, version, an
   }
   assert.ok(html.includes('>v1<'), 'dashboard missing v1 badge');
   assert.ok(html.includes('>v2<'), 'dashboard missing v2 badge');
+
+  const GITHUB_REPO_URL = 'https://github.com/nampluskr/workflow-hub';
+  for (const { project } of CASES) {
+    for (const version of [1, 2]) {
+      const snapshotPath = `.claude/version-history/${project}/v${version}`;
+      assert.ok(
+        html.includes(`${GITHUB_REPO_URL}/blob/main/${snapshotPath}/main.py`),
+        `dashboard missing GitHub code link for ${snapshotPath}`,
+      );
+      assert.ok(
+        html.includes(`${GITHUB_REPO_URL}/blob/main/${snapshotPath}/MANUAL.md`),
+        `dashboard missing GitHub manual link for ${snapshotPath}`,
+      );
+      assert.ok(
+        html.includes(`${GITHUB_REPO_URL}/tree/main/${snapshotPath}`),
+        `dashboard missing GitHub tree link for ${snapshotPath}`,
+      );
+    }
+  }
 });

@@ -6,6 +6,9 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const historyRoot = path.join(projectRoot, '.claude', 'version-history');
 const outputPath = path.join(projectRoot, 'dashboard', 'index.html');
 
+const GITHUB_REPO_URL = 'https://github.com/nampluskr/workflow-hub';
+const GITHUB_BRANCH = 'main';
+
 function escapeHtml(str) {
   return String(str)
     .replaceAll('&', '&amp;')
@@ -48,13 +51,24 @@ function loadProjects() {
 }
 
 function renderProjectCard(project) {
-  const rows = project.versions.map((v) => `
+  const rows = project.versions.map((v) => {
+    const snapshotPath = `.claude/version-history/${project.name}/v${v.version}`;
+    const codeUrl = `${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/main.py`;
+    const manualUrl = `${GITHUB_REPO_URL}/blob/${GITHUB_BRANCH}/${snapshotPath}/MANUAL.md`;
+    const githubUrl = `${GITHUB_REPO_URL}/tree/${GITHUB_BRANCH}/${snapshotPath}`;
+    return `
         <tr>
           <td class="version-badge">v${escapeHtml(v.version)}</td>
           <td>${escapeHtml(v.author)}</td>
           <td>${escapeHtml(v.date)}</td>
           <td>${escapeHtml(v.summary)}</td>
-        </tr>`).join('');
+          <td class="links">
+            <a href="${escapeHtml(codeUrl)}" target="_blank" rel="noopener">코드</a>
+            · <a href="${escapeHtml(manualUrl)}" target="_blank" rel="noopener">매뉴얼</a>
+            · <a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener">깃헙</a>
+          </td>
+        </tr>`;
+  }).join('');
 
   const latest = project.versions[0];
 
@@ -67,9 +81,9 @@ function renderProjectCard(project) {
       ${project.purpose ? `<p class="purpose">${escapeHtml(project.purpose)}</p>` : ''}
       <table>
         <thead>
-          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th></tr>
+          <tr><th>버전</th><th>작업자</th><th>날짜</th><th>변경 요약</th><th>코드 · 매뉴얼 · 깃헙</th></tr>
         </thead>
-        <tbody>${rows || '<tr><td colspan="4" class="empty">등록된 버전이 없습니다</td></tr>'}</tbody>
+        <tbody>${rows || '<tr><td colspan="5" class="empty">등록된 버전이 없습니다</td></tr>'}</tbody>
       </table>
     </section>`;
 }
